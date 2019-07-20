@@ -1,8 +1,11 @@
 .panelItems {
     margin-top: 10px;
-    text-align: center;
     font-weight: bolder;
     font-size: 20px;
+}
+
+#panel li{
+    text-align: left;
 }
 
 .btn {

@@ -15,7 +15,7 @@ $fileType = pathinfo($targetFilePath,PATHINFO_EXTENSION);
 if(isset($_POST["submit"]) && !empty($_FILES["file"]["name"])){
     // Allow certain file formats
     
-    $allowTypes = array('jpg','png','jpeg','pdf');
+    $allowTypes = array('pdf','PDF');
     
     $data_missing = array();
     
@@ -31,15 +31,27 @@ if(isset($_POST["submit"]) && !empty($_FILES["file"]["name"])){
 
     }
 
-    if(empty($_POST['date'])){
+    if(empty($_POST['startDate'])){
 
         // Adds name to array
-        $data_missing[] = 'Date';
+        $data_missing[] = 'Start Date';
 
     } else{
 
         // Trim white space from the name and store the name
-        $billDate = trim($_POST['date']);
+        $billStartDate = trim($_POST['startDate']);
+
+    }
+    
+    if(empty($_POST['endDate'])){
+
+        // Adds name to array
+        $data_missing[] = 'End Date';
+
+    } else{
+
+        // Trim white space from the name and store the name
+        $billEndDate = trim($_POST['endDate']);
 
     }
 
@@ -64,7 +76,7 @@ if(isset($_POST["submit"]) && !empty($_FILES["file"]["name"])){
             
             if(empty($data_missing)){
                 
-                $insert =  $dbc->query("INSERT INTO bills (username, bill_type, bill_date, bill_amount, bill_proof, date_entered, bill_id) VALUES ('".$login_session."', '".$billType."', '".$billDate."', '".$billAmount."', '".$fileName."', NOW(), NULL)");
+                $insert =  $dbc->query("INSERT INTO bills (username, bill_type, bill_startDate, bill_endDate, bill_amount, bill_proof, date_entered, bill_id) VALUES ('".$login_session."', '".$billType."', '".$billStartDate."', '".$billEndDate."', '".$billAmount."', '".$fileName."', NOW(), NULL)");
 
                 if(insert){
 

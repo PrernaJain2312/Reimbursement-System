@@ -1,25 +1,30 @@
 <?php 
 include 'mysqli_connect.php';
-include 'session.php';
+session_start();
 
-$allData = "SELECT * FROM bills WHERE username='$login_session' ORDER BY bill_date DESC";
+$allData = "SELECT * FROM bills WHERE username='".$_SESSION['login_user']."' ORDER BY bill_startDate DESC";
 $billTypeQuery = "SELECT DISTINCT bill_type FROM bills";
 $billStatusQuery = "SELECT DISTINCT status FROM bills";
+$billUsernameQuery = "SELECT DISTINCT username FROM bills";
 $allDataResult = mysqli_query($dbc, $allData);
 $billTypeResult = mysqli_query($dbc, $billTypeQuery);
 $billStatusResult = mysqli_query($dbc, $billStatusQuery);
+$billUsernameResult = mysqli_query($dbc, $billUsernameQuery);
 ?>
 
-<div class="card" style="box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.2), 0 8px 24px 0 rgba(0, 0, 0, 0.19)" >
-    <div class="card-header" style="background-color: #337ab7; height: 50px; color: white; text-align: center; font-weight: bolder; font-size: 40px">
+<div class="card" style="box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.2), 0 8px 24px 0 rgba(0, 0, 0, 0.19); width: 1000px; margin-left: -4%" >
+    <div class="card-header" style="background-color: #337ab7; height: 50px; color: white; text-align: center; font-weight: bolder; font-size: 35px">
         View Bills
     </div>
     <div class="table-responsive">
     <table id="bill_data" class="table table-bordered table-striped">
-     <thead>
+     <thead id="billHead">
       <tr>
-       <th>
-           <select name="billtype" id="billtype" class="form-control"> 
+          <th hidden>
+              <input hidden id="billusername" value="<?php echo $_SESSION['login_user']; ?>">
+          </th>
+       <th width="5%">
+           <select name="billtype" id="billtype" class="form-control" style="width: 105px"> 
          <option value >Bill Type</option>
          <?php 
          while($row = mysqli_fetch_array($billTypeResult))
@@ -29,11 +34,17 @@ $billStatusResult = mysqli_query($dbc, $billStatusQuery);
          ?>
         </select>
        </th>
-       <th>Bill Date</th>
-       <th>Bill Amount</th>
-       <th>Attached Bill</th>
-       <th>
-        <select name="billstatus" id="billstatus" class="form-control" >
+       <th width="5%">
+           <span style="margin-left: 15px">Start Date</span>
+           <input id="startDate" type="date" name="startDate" class="form-control" style="padding-left: 2px; width: 140px; font-size: 1vw" >
+       </th>
+       <th width="5%">
+           <span style="margin-left: 15px">End Date</span>
+           <input id="endDate" type="date" name="endDate" class="form-control" style="padding-left: 2px; width: 140px; font-size: 1vw" >
+       </th>
+       <th width="5%">Bill Amount</th>
+       <th width="5%">Attached Bill</th>
+       <th width="10%"><select name="billstatus" id="billstatus" class="form-control" >
          <option value >Status</option>
          <?php 
          while($row = mysqli_fetch_array($billStatusResult))
@@ -43,6 +54,7 @@ $billStatusResult = mysqli_query($dbc, $billStatusQuery);
          ?>
         </select>
        </th>
+       
       </tr>
      </thead>
     <tbody id="table_body">
@@ -52,7 +64,8 @@ $billStatusResult = mysqli_query($dbc, $billStatusQuery);
             ?>
         <tr>
             <td><?php echo $row1["bill_type"]?></td>
-            <td><?php echo $row1["bill_date"]?></td>
+            <td><?php echo $row1["bill_startDate"]?></td>
+            <td><?php echo $row1["bill_endDate"]?></td>
             <td><?php echo $row1["bill_amount"]?></td>
             <td><?php echo "<a href='$imageURL' download>".$row1["bill_proof"]."</a>" ?></td>
             <td><?php echo $row1["status"]?></td>
@@ -66,16 +79,22 @@ $billStatusResult = mysqli_query($dbc, $billStatusQuery);
 </div>
 
 <script>
+$('#billHead').change(function() {
+    var username = $('#billusername').val();
+    var bill_type = $('#billtype').val();
+    var bill_startDate = $('#startDate').val();
+    var bill_endDate = $('#endDate').val();
+    var status = $('#billstatus').val();
     
-$('#billtype,#billstatus').change(function () {
-    var billType = $('#billtype').val();
-    var billStatus= $('#billstatus').val();
-
+    console.log(username)
     $.ajax({
         type: "POST",
-        url: "filter.php",
-        data: {billType: billType,
-               billStatus: billStatus
+        url: "viewFilter.php",
+        data: {username: username,
+               bill_type: bill_type,
+               bill_startDate: bill_startDate,
+               bill_endDate: bill_endDate,
+               status: status
         },
         success: function (data) {     
            $("#table_body").html(data);

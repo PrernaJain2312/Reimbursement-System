@@ -1,4 +1,5 @@
 <?php
+session_start();
 include('session.php'); 
 if( (!isset($_SESSION['login_user'])) || ($_SESSION['login_user']== "Admin")){ 
   header("location: index.php"); // Redirecting To Home Page 
@@ -9,16 +10,18 @@ if( (!isset($_SESSION['login_user'])) || ($_SESSION['login_user']== "Admin")){
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>SSPL Reimbursement System</title>
+        <title>SSPL Bill Reimbursement System</title>
 
         <link rel="stylesheet" href="StyleSheet.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <link src="https://cdnjs.cloudflare.com/ajax/libs/TableExport/5.2.0/css/tableexport.min.css" rel="stylesheet">
         <script>
             $(document).ready(function() {
                 // Set trigger and container variables
+                $('#content').load('addBill.php');
                 var trigger = $('#panel li a'),
                     container = $('#content');
 
@@ -47,9 +50,10 @@ if( (!isset($_SESSION['login_user'])) || ($_SESSION['login_user']== "Admin")){
                     <ul class="navbar navbar-default nav" style="height:600px; margin-top: -25px; padding-top: 20px" id="panel">
                         <li class="panelItems"><a href="#" data-target="addBill"> Add Bills</a></li>
                         <li class="panelItems"><a href="#" data-target="viewBill"> View Bills</a></li>
+                        <li class="panelItems"><a href="#" data-target="rejectedBill"> Manage Rejected Bills</a></li>
                     </ul>
                 </div>
-                <div class="col" id="content" style="width: 800px; margin-left: 35%">
+                <div class="col" id="content" style="width: 900px; margin-left: 30%; padding-top: 2%">
                     
                 </div>
             </div>
